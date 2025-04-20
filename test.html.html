@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart City Kuala Lumpur</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .welcome {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Kuala_Lumpur_Skyline_at_dusk_%28Pano%29.jpg/1920px-Kuala_Lumpur_Skyline_at_dusk_%28Pano%29.jpg') no-repeat center center/cover;
+      text-align: center;
+      color: white;
+    }
+    .welcome h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    .welcome button {
+      padding: 12px 30px;
+      font-size: 18px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .nav-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 40px;
+    }
+    .nav-buttons button {
+      flex: 1 1 200px;
+      padding: 15px;
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .section {
+      display: none;
+      margin-top: 40px;
+    }
+    canvas {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .info-box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .info-box img {
+      width: 100%;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="welcome" id="welcome">
+  <h1>Smart City Kuala Lumpur</h1>
+  <button onclick="enterSite()">Enter Site</button>
+</div>
+
+<div class="container" id="mainContent" style="display:none;">
+  <div class="nav-buttons">
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('traffic')">Traffic</button>
+    <button onclick="showSection('crime')">Crime</button>
+    <button onclick="showSection('events')">Events</button>
+  </div>
+
+  <div id="dashboard" class="section">
+    <h2>City Dashboard</h2>
+    <canvas id="chartDashboard" height="200"></canvas>
+    <div class="info-box">
+      <h3>Energy Sources</h3>
+      <p>Solar: 35%, Hydro: 25%, Fossil: 40%</p>
+    </div>
+    <div class="info-box">
+      <h3>Water Usage</h3>
+      <canvas id="waterChart" height="150"></canvas>
+    </div>
+  </div>
+
+  <div id="traffic" class="section">
+    <h2>Traffic Updates</h2>
+    <canvas id="trafficChart" height="200"></canvas>
+    <div class="info-box">
+      <h3>Live Traffic Insights</h3>
+      <p>Average Speed: 38 km/h</p>
+      <p>High Congestion: Jalan Tun Razak</p>
+      <img src="https://via.placeholder.com/800x200?text=Live+Traffic+Feed" alt="Live Traffic"/>
+    </div>
+  </div>
+
+  <div id="crime" class="section">
+    <h2>Crime Statistics</h2>
+    <canvas id="crimeChart" height="200"></canvas>
+    <div class="info-box">
+      <h3>Recent Incidents</h3>
+      <ul>
+        <li>Theft reported in Bukit Bintang - April 18</li>
+        <li>Break-in at Cheras - April 17</li>
+        <li>Vandalism in KL Sentral - April 15</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="events" class="section">
+    <h2>Upcoming Events</h2>
+    <div class="info-box">
+      <h3>Smart City Expo</h3>
+      <p>Date: April 30</p>
+      <p>Location: KLCC</p>
+      <img src="https://via.placeholder.com/800x200?text=Smart+City+Expo" alt="Event"/>
+    </div>
+    <div class="info-box">
+      <h3>Public Safety Seminar</h3>
+      <p>Date: May 3</p>
+      <p>Location: DBKL Auditorium</p>
+      <img src="https://via.placeholder.com/800x200?text=Safety+Seminar" alt="Seminar"/>
+    </div>
+  </div>
+</div>
+
+<script>
+  function enterSite() {
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    showSection('dashboard');
+    renderCharts();
+  }
+
+  function showSection(id) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function renderCharts() {
+    new Chart(document.getElementById('chartDashboard'), {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Energy Usage (MWh)',
+          data: [1200, 1250, 1300, 1270, 1350, 1400, 1320],
+          borderColor: '#007BFF',
+          backgroundColor: 'rgba(0,123,255,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('waterChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Residential', 'Commercial', 'Industrial'],
+        datasets: [{
+          label: 'Water Usage (m3)',
+          data: [12000, 9000, 6000],
+          backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('trafficChart'), {
+      type: 'bar',
+      data: {
+        labels: ['8AM', '12PM', '4PM', '8PM'],
+        datasets: [{
+          label: 'Average Speed (km/h)',
+          data: [30, 45, 35, 40],
+          backgroundColor: '#007BFF'
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('crimeChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Theft', 'Burglary', 'Vandalism', 'Other'],
+        datasets: [{
+          label: 'Crime Rate',
+          data: [5, 3, 2, 2],
+          backgroundColor: ['#F44336', '#FF9800', '#9C27B0', '#607D8B']
+        }]
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
